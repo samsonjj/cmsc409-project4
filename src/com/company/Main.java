@@ -71,7 +71,7 @@ public class Main {
         }
 
         // Create a list of words,
-        ArrayList<String> wordList;
+        ArrayList<String> featureVector;
 
         HashSet<String> dictionary = new HashSet<>();
         for(ArrayList<String> tokens : sentence_tokens) {
@@ -79,31 +79,31 @@ public class Main {
                 dictionary.add(token);
             }
         }
-        wordList = new ArrayList(dictionary);
-        Collections.sort(wordList);
+        featureVector = new ArrayList(dictionary);
+        Collections.sort(featureVector);
 
         // Create feature vector for each sentence
-        int[][] featureVectors = new int[sentence_tokens.size()][wordList.size()];
+        int[][] tdm = new int[sentence_tokens.size()][featureVector.size()];
         for(int i = 0; i < sentence_tokens.size(); i++) {
-            HashMap<String, Integer> wordCount = new HashMap<>();
+            HashMap<String, Integer> featureCount = new HashMap<>();
             for(String token : sentence_tokens.get(i)) {
-                Integer count = wordCount.get(token);
+                Integer count = featureCount.get(token);
                 if(count == null) {
-                    wordCount.put(token, 1);
+                    featureCount.put(token, 1);
                 } else {
-                    wordCount.put(token, count + 1);
+                    featureCount.put(token, count + 1);
                 }
             }
-            for(int j = 0; j < wordList.size(); j++) {
-                String feature = wordList.get(j);
-                Integer count = wordCount.get(feature);
-                featureVectors[i][j] = (count == null ? 0 : count);
+            for(int j = 0; j < featureVector.size(); j++) {
+                String feature = featureVector.get(j);
+                Integer count = featureCount.get(feature);
+                tdm[i][j] = (count == null ? 0 : count);
             }
         }
 
 
-        System.out.println("number of unique words is " + wordList.size());
-        System.out.println("wordList: " + wordList);
+        System.out.println("number of unique words in the feature vector is " + featureVector.size());
+        System.out.println("feature vector: " + featureVector);
 
         System.out.println("\nsentence tokens: ");
         for(int i = 0; i < sentence_tokens.size(); i++) {
@@ -111,10 +111,10 @@ public class Main {
             printlnTokenArray(sentence_tokens.get(i));
         }
 
-        System.out.println("\nfeature vectors: ");
-        for(int i = 0; i < featureVectors.length; i++) {
+        System.out.println("\nTerm Document Matrix: ");
+        for(int i = 0; i < tdm.length; i++) {
             System.out.print(i + ") ");
-            System.out.println(Arrays.toString(featureVectors[i]));
+            System.out.println(Arrays.toString(tdm[i]));
         }
 
 
