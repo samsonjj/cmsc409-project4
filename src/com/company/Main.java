@@ -8,6 +8,11 @@ public class Main {
     static final String INPUT_FILE_NAME = "sentences.txt";
     static final String STOP_WORDS_FILE_NAME = "stop_words.txt";
 
+    static final double THRESHOLD = 4;
+
+
+
+
     public static void main(String[] args) {
 
         System.out.println("Starting...");
@@ -21,12 +26,19 @@ public class Main {
                 String sentence = sentenceScanner.nextLine();
                 if(!sentence.trim().equals("")) sentences.add(sentence);
             }
+        } catch(Exception e) {
+            System.out.println("error reading file \"" + INPUT_FILE_NAME + "\"");
+        }
+
+        // Read in stop words
+        try(Scanner sentenceScanner = new Scanner(new File(INPUT_FILE_NAME)); Scanner stopScanner = new Scanner(new File(STOP_WORDS_FILE_NAME))) {
             while(stopScanner.hasNext()) {
                 stopWords.add(stopScanner.next());
             }
         } catch(Exception e) {
-            System.out.println("error reading file \"" + INPUT_FILE_NAME + "\"");
+            System.out.println("error reading file \"" + STOP_WORDS_FILE_NAME + "\"");
         }
+
 
         ArrayList<ArrayList<String>> sentence_tokens = new ArrayList<>();
 
@@ -102,6 +114,28 @@ public class Main {
         }
 
 
+        // Cluster the sentences using FCAN (Form Clusters as Necessary)
+        ArrayList<Cluster> clusters = new ArrayList<>();
+        for(int i = 0; i < tdm.length; i++) {
+            Cluster bestFitCluster = null;
+            double minDistance = Double.MAX_VALUE;
+            for(Cluster c : clusters) {
+                double distance = c.getDistance(tdm[i]);
+                if(distance <= THRESHOLD && distance < minDistance) {
+                    bestFitCluster = c;
+                    minDistance = distance;
+                }
+            }
+            if(bestFitCluster == null) {
+                // Create new cluster
+                Cluster cluster = new Cluster();
+                cluster.add(tdm[i], sentences.get(i), sentence_tokens.get(i));
+                clusters.add(cluster);
+            } else {
+                bestFitCluster.add(tdm[i], sentences.get(i), sentence_tokens.get(i));
+            }
+        }
+
         System.out.println("number of unique words in the feature vector is " + featureVector.size());
         System.out.println("feature vector: " + featureVector);
 
@@ -115,6 +149,20 @@ public class Main {
         for(int i = 0; i < tdm.length; i++) {
             System.out.print(i + ") ");
             System.out.println(Arrays.toString(tdm[i]));
+        }
+
+
+        // Print clusters
+        System.out.println();
+        int counter = 0;
+        for(Cluster c : clusters) {
+            counter++;
+            System.out.println("Cluster " + counter);
+            System.out.println(Arrays.toString(c.getWeights()));
+            for(ArrayList<String> tokens : c.getSentenceTokens()) {
+                printlnTokenArray(tokens);
+            }
+            System.out.println();
         }
 
 
