@@ -8,7 +8,7 @@ public class Main {
     static final String INPUT_FILE_NAME = "sentences.txt";
     static final String STOP_WORDS_FILE_NAME = "stop_words.txt";
 
-    static final double THRESHOLD = -.005;
+    static final double THRESHOLD = -.003;
 
 
     static final int[] correctClustering = new int[]{1,
@@ -205,12 +205,13 @@ public class Main {
         for (Cluster c : clusters) {
             counter++;
             System.out.println("Cluster " + counter);
-            System.out.println(Arrays.toString(c.getWeights()));
+//            System.out.println(Arrays.toString(c.getWeights()));
             ArrayList<ArrayList<String>> tokens = c.getSentenceTokens();
             ArrayList<int[]> vectors = c.getVectors();
             for (int i = 0; i < tokens.size(); i++) {
-                System.out.print(c.getCorrectCluster().get(i) + " " + c.getDistance(vectors.get(i)) + " ");
-                printlnTokenArray(tokens.get(i));
+//                System.out.print(c.getCorrectCluster().get(i) + " " + c.getDistance(vectors.get(i)) + " ");
+//                printlnTokenArray(tokens.get(i));
+                System.out.println(c.getSentences().get(i));
             }
             System.out.println();
         }
