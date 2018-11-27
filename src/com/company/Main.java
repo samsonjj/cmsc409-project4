@@ -8,7 +8,7 @@ public class Main {
     static final String INPUT_FILE_NAME = "sentences.txt";
     static final String STOP_WORDS_FILE_NAME = "stop_words.txt";
 
-    static final double THRESHOLD = -.003;
+    static final double THRESHOLD = -.005;
 
 
     static final int[] correctClustering = new int[]{1,
